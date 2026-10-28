@@ -1,5 +1,5 @@
 image:
-  repository: YOUR_DOCKERHUB_USERNAME # change this
+  repository: vickysurest # change this
   prefix: voting-                     # images are <repository>/voting-vote, voting-result, voting-worker
   tag: dev                            # CI overrides this with the commit SHA
 
