@@ -1,0 +1,9 @@
+    .git
+.gitignore
+.vscode
+*.md
+__pycache__
+*.pyc
+node_modules
+bin
+obj

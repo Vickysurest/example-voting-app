@@ -25,8 +25,12 @@ FROM base AS final
 # Copy our code from the current folder to the working directory inside the container
 COPY . .
 
+# Create and switch to a non-root user
+RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --no-create-home app && chown -R app:app /usr/local/app
+USER 10001
+
 # Make port 80 available for links and/or publish
-EXPOSE 80
+EXPOSE 8080
 
 # Define our command to be run when launching the container
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:8080", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
