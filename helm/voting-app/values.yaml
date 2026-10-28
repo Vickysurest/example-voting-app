@@ -1,0 +1,31 @@
+image:
+  repository: YOUR_DOCKERHUB_USERNAME # change this
+  prefix: voting-                     # images are <repository>/voting-vote, voting-result, voting-worker
+  tag: dev                            # CI overrides this with the commit SHA
+
+apps:
+  vote:
+    port: 8080          # must match the port in your hardened Dockerfile
+    replicas: 1
+    serviceType: ClusterIP
+  result:
+    port: 8080          # must match the port in your hardened Dockerfile
+    replicas: 1
+    serviceType: ClusterIP
+  worker:
+    replicas: 1         # no port: the worker only talks to redis and the database
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+redis:
+  image: redis:7.4-alpine
+
+db:
+  image: postgres:16-alpine
+  user: postgres
+  password: postgres

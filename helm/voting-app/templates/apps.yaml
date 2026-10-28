@@ -1,0 +1,46 @@
+{{- range $name, $app := .Values.apps }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+spec:
+  replicas: {{ $app.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ $name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}
+    spec:
+      containers:
+        - name: {{ $name }}
+          image: "{{ $.Values.image.repository }}/{{ $.Values.image.prefix }}{{ $name }}:{{ $.Values.image.tag }}"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          {{- if $app.port }}
+          ports:
+            - containerPort: {{ $app.port }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ $app.port }}
+          {{- end }}
+{{- if $app.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+spec:
+  type: {{ $app.serviceType | default "ClusterIP" }}
+  selector:
+    app: {{ $name }}
+  ports:
+    - port: {{ $app.port }}
+      targetPort: {{ $app.port }}
+{{- end }}
+{{- end }}
